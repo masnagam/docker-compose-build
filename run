@@ -1,0 +1,86 @@
+#!/bin/sh
+
+set -eu
+
+PROGNAME=$(basename $0)
+BASEDIR=$(cd $(dirname $0); pwd)
+
+TAG=
+
+if [ "$(uname)" != Linux ] || id -nG | grep -q docker; then
+    DOCKER='docker'
+else
+    DOCKER='sudo docker'
+fi
+
+help() {
+    cat <<EOF >&2
+Install docker-compose
+
+USAGE:
+  install-docker-compose -h | --help
+  install-docker-compose <tag>
+
+OPTIONS:
+  -h, --help
+    Show help
+
+ARGUMENTS:
+  <tag>
+    One of tags listed in https://hub.docker.com/r/masnagam/docker-compose/tags.
+
+DESCRIPTION:
+  This script installs docker-compose which is expected from a Docker image
+  downloaded from masnagam/docker-compose:\$tag.
+
+  Downloaded image will be removed automatically.
+
+Example
+  Install 1.25.4 into /usr/local/bin:
+
+    install-docker-compose 1.25.4 | sudo tar -x -C /usr/local/bin
+
+  Extract platform-specific docker-compose, and copy it via SSH
+
+    install-docker-compose master-debian-arm64v8 | ssh tar -x
+EOF
+    exit 0
+}
+
+error() {
+    echo "$1" >&2
+    exit 1
+}
+
+clean() {
+    sleep 1
+    if [ -n "$CONTAINER" ]; then
+        $DOCKER container rm -f "$CONTAINER"
+    fi
+    $DOCKER image rm -f $IMAGE
+}
+
+while [ $# -gt 0 ]
+do
+    case "$1" in
+        '-h' | '--help')
+            help
+            ;;
+        *)
+            break
+            ;;
+    esac
+done
+
+TAG="$1"
+if [ -z "$TAG" ]; then
+    error "tag is required"
+fi
+
+IMAGE=masnagam/docker-compose:$TAG
+CONTAINER=
+
+trap "clean" EXIT
+
+CONTAINER=$($DOCKER create $IMAGE)
+$DOCKER cp $CONTAINER:/usr/local/bin/docker-compose -
