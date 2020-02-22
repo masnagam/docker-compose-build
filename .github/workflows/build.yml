@@ -32,11 +32,11 @@ jobs:
       - name: Set VERSION
         run: |-
           echo ::set-env name=VERSION::${{ github.event.client_payload.version }}
-          echo "VERSION=$VERSION"
+          echo "VERSION=${{ github.event.client_payload.version }}"
       - name: Set GIT_COMMIT
         run: |-
           echo ::set-env name=GIT_COMMIT::$(git rev-parse --short HEAD)
-          echo "GIT_COMMIT=$GIT_COMMIT"
+          echo "GIT_COMMIT=$(git rev-parse --short HEAD)"
       - name: Setup QEMU user-mode emulation
         run: |-
           sudo apt-get update
