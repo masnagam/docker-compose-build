@@ -84,7 +84,8 @@ jobs:
     steps:
       - name: Set VERSION
         run: |-
-          echo ::set-env name=VERSION::${GITHUB_REF#refs/*/}
+          echo ::set-env name=VERSION::${{ github.event.client_payload.version }}
+          echo "VERSION=${{ github.event.client_payload.version }}"
       - name: Login to DockerHub
         run: |-
           docker login -u $DOCKERHUB_USER -p ${{ secrets.DOCKERHUB_TOKEN }}
