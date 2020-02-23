@@ -1,13 +1,35 @@
 # Install docker-compose using multiarch Docker image
 
 ```shell
+# On a target machine
 curl -fsSL https://raw.githubusercontent.com/masnagam/install-docker-compose/master/run | \
   sh -s -- 1.25.4 | sudo tar -x -C /usr/local/bin
+
+# On a remote machine
+curl -fsSL https://raw.githubusercontent.com/masnagam/install-docker-compose/master/run | \
+  sh -s -- 1.25.4-debian-arm64v8 | ssh $REMOTE tar -x
 ```
 
-## How to invoke the build job
+## Docker images
 
-Manual trigger:
+DockerHub:
+
+* https://hub.docker.com/r/masnagam/docker-compose
+
+Supported platforms:
+
+* alpine
+* debian (main platform)
+
+Supported architectures:
+
+* amd64
+* arm32v7
+* arm32v8
+
+## Invoke the build job
+
+Invoke manually:
 
 ```shell
 REPO=masnagam/docker-compose-builder
