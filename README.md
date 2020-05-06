@@ -1,3 +1,7 @@
+# DO NOT USE THIS REPOSITORY ANYMORE
+
+This repository was merged into [masnagam/sbc-scripts](https://github.com/masnagam/sbc-scripts).
+
 # Install docker-compose using multiarch Docker image
 
 ```shell
